@@ -19,7 +19,9 @@ class FakeProfiles:
     def __init__(self, profile: UserWakeProfile | None = None) -> None:
         self._profile = profile or UserWakeProfile(
             user_id="user-test",
-            tracks_by_weather={WeatherType.SOLEIL: "Here Comes The Sun"},
+            tracks_by_day_and_weather={
+                (DayOfWeek.MONDAY, WeatherType.SOLEIL): "Here Comes The Sun",
+            },
             fallback_track_query="Wake Up",
             preferred_channel=NotificationChannel.PUSH,
             email="test@example.com",

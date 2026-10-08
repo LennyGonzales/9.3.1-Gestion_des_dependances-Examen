@@ -36,7 +36,7 @@ class Track:
 @dataclass(frozen=True)
 class UserWakeProfile:
     user_id: str
-    tracks_by_weather: dict[WeatherType, str]
+    tracks_by_day_and_weather: dict[tuple[DayOfWeek, WeatherType], str]
     fallback_track_query: str
     preferred_channel: NotificationChannel
     email: str

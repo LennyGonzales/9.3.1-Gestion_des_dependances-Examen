@@ -16,6 +16,8 @@ Architecture **Ports & Adapters** (hexagonale) :
 
 Le **canal préféré** est lu depuis le mock du service interne (`UserProfilePort`), pas depuis l'appel HTTP.
 
+Le **morceau** est choisi uniquement à partir du couple **(jour, météo)** fourni à l'appel (grille dans le profil mock) ; si la paire est absente, morceau de secours `fallback_track_query`.
+
 ## Prérequis
 
 - [Docker](https://docs.docker.com/get-docker/)

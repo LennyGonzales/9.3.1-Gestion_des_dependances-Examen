@@ -30,7 +30,7 @@ class WakeupService:
         demo: bool = False,
     ) -> WakeupResult:
         profile = await self._profiles.get_profile(user_id)
-        query = self._pick_track_query(profile, weather)
+        query = self._pick_track_query(profile, day_of_week, weather)
         resolver = self._demo_music_resolver if demo else self._music_resolver
         resolved = await resolver.resolve(query)
         message = self._build_message(day_of_week, weather, resolved.track)
@@ -47,8 +47,12 @@ class WakeupService:
         )
 
     @staticmethod
-    def _pick_track_query(profile: UserWakeProfile, weather: WeatherType) -> str:
-        return profile.tracks_by_weather.get(weather, profile.fallback_track_query)
+    def _pick_track_query(
+        profile: UserWakeProfile, day_of_week: DayOfWeek, weather: WeatherType
+    ) -> str:
+        return profile.tracks_by_day_and_weather.get(
+            (day_of_week, weather), profile.fallback_track_query
+        )
 
     @staticmethod
     def _build_message(

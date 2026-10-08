@@ -10,6 +10,7 @@ from app.domain.models import (
     UserWakeProfile,
     WeatherType,
 )
+from app.infrastructure.composite_music_resolver import DemoMusicResolver
 from app.services.wakeup_service import WakeupService
 from tests.conftest import FakeMusicResolver, FakeNotifier, FakeProfiles
 
@@ -83,6 +84,38 @@ async def test_trigger_wakeup_user_not_found():
         await service.trigger_wakeup(
             "unknown", DayOfWeek.MONDAY, WeatherType.SOLEIL
         )
+
+
+@pytest.mark.asyncio
+async def test_track_query_depends_on_day_and_weather():
+    profile = UserWakeProfile(
+        user_id="user-test",
+        tracks_by_day_and_weather={
+            (DayOfWeek.MONDAY, WeatherType.SOLEIL): "Here Comes The Sun",
+            (DayOfWeek.SATURDAY, WeatherType.SOLEIL): "Walking on Sunshine",
+        },
+        fallback_track_query="Wake Up",
+        preferred_channel=NotificationChannel.PUSH,
+        email="test@example.com",
+        phone="+33600000099",
+        device_token="token-test",
+    )
+    service = WakeupService(
+        profiles=FakeProfiles(profile),
+        music_resolver=FakeMusicResolver(),
+        demo_music_resolver=DemoMusicResolver(),
+        notifier=FakeNotifier(),
+    )
+
+    monday = await service.trigger_wakeup(
+        "user-test", DayOfWeek.MONDAY, WeatherType.SOLEIL, demo=True
+    )
+    saturday = await service.trigger_wakeup(
+        "user-test", DayOfWeek.SATURDAY, WeatherType.SOLEIL, demo=True
+    )
+
+    assert monday.track.title == "Here Comes The Sun"
+    assert saturday.track.title == "Walking on Sunshine"
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,12 @@
 import pytest
 
-from app.domain.models import NotificationChannel, Track, UserWakeProfile, WeatherType
+from app.domain.models import (
+    DayOfWeek,
+    NotificationChannel,
+    Track,
+    UserWakeProfile,
+    WeatherType,
+)
 from app.infrastructure.notifications.adapters import (
     EmailNotificationAdapter,
     EmergencyConsoleAdapter,
@@ -14,7 +20,9 @@ from app.infrastructure.notifications.resilient_sender import ResilientNotificat
 def sample_profile(channel: NotificationChannel) -> UserWakeProfile:
     return UserWakeProfile(
         user_id="u1",
-        tracks_by_weather={WeatherType.SOLEIL: "Wake Up"},
+        tracks_by_day_and_weather={
+            (DayOfWeek.MONDAY, WeatherType.SOLEIL): "Wake Up",
+        },
         fallback_track_query="Wake Up",
         preferred_channel=channel,
         email="u@example.com",

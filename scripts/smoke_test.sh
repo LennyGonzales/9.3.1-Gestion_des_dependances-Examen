@@ -42,17 +42,23 @@ post "?demo=true" '{"userId":"user-pluie","dayOfWeek":"TUESDAY","weather":"PLUIE
 post "?demo=true" '{"userId":"user-sms","dayOfWeek":"WEDNESDAY","weather":"SOLEIL"}'
 
 echo ""
-echo "========== 3. Démo — fallback morceau (user-pluie + SOLEIL) =========="
+echo "========== 3. Démo — jour + météo (user-soleil) =========="
+post "?demo=true" '{"userId":"user-soleil","dayOfWeek":"MONDAY","weather":"SOLEIL"}'
+post "?demo=true" '{"userId":"user-soleil","dayOfWeek":"SATURDAY","weather":"SOLEIL"}'
+post "?demo=true" '{"userId":"user-soleil","dayOfWeek":"MONDAY","weather":"PLUIE"}'
+
+echo ""
+echo "========== 4. Démo — fallback morceau (user-pluie + SOLEIL) =========="
 post "?demo=true" '{"userId":"user-pluie","dayOfWeek":"FRIDAY","weather":"SOLEIL"}'
 
 echo ""
-echo "========== 4. Erreurs =========="
+echo "========== 5. Erreurs =========="
 post "?demo=true" '{"userId":"inconnu","dayOfWeek":"MONDAY","weather":"SOLEIL"}'
 post "?demo=true" '{"userId":"user-soleil","dayOfWeek":"MONDAY","weather":"ORAGE"}'
 
 if [ "$RUN_LIVE" = "1" ]; then
   echo ""
-  echo "========== 5. APIs externes (sans demo) =========="
+  echo "========== 6. APIs externes (sans demo) =========="
   post "" '{"userId":"user-soleil","dayOfWeek":"MONDAY","weather":"SOLEIL"}'
   echo "(2e appel — cache musique)"
   post "" '{"userId":"user-soleil","dayOfWeek":"MONDAY","weather":"SOLEIL"}'
@@ -60,7 +66,7 @@ if [ "$RUN_LIVE" = "1" ]; then
   post "" '{"userId":"user-pluie","dayOfWeek":"MONDAY","weather":"PLUIE"}'
 else
   echo ""
-  echo "========== 5. APIs externes — ignoré =========="
+  echo "========== 6. APIs externes — ignoré =========="
   echo "Lancer avec RUN_LIVE=1 $0 pour tester iTunes/MusicBrainz."
 fi
 
