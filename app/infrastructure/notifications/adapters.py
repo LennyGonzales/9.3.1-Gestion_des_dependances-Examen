@@ -1,6 +1,10 @@
+import logging
+
 from app.domain.exceptions import NotificationError
 from app.domain.models import NotificationChannel, Track, UserWakeProfile
 from app.infrastructure.notifications.mocks import EmailMock, PushMock, SmsMock
+
+logger = logging.getLogger(__name__)
 
 
 class EmailNotificationAdapter:
@@ -64,9 +68,6 @@ class PushNotificationAdapter:
 
 
 class EmergencyConsoleAdapter:
-    def __init__(self) -> None:
-        self.logged: list[str] = []
-
     @property
     def channel(self) -> NotificationChannel:
         return NotificationChannel.EMERGENCY
@@ -74,5 +75,9 @@ class EmergencyConsoleAdapter:
     async def notify(
         self, profile: UserWakeProfile, message: str, track: Track
     ) -> None:
-        entry = f"[EMERGENCY] user={profile.user_id} {message}"
-        self.logged.append(entry)
+        logger.warning(
+            "[EMERGENCY] user=%s track=%s — %s",
+            profile.user_id,
+            track.title,
+            message,
+        )

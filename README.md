@@ -102,20 +102,21 @@ docker run --rm -v "$(pwd):/repo:ro" reveil-musical sh /repo/scripts/check_licen
 
 Inventaire détaillé : voir `licenses/licenses.md` (généré via `pip-licenses` dans l'image Docker).
 
-| Package | Version épinglée | Licence | Remarque |
-|---|---|---|---|
-| fastapi | 0.142.4 | MIT | `requirements.txt` |
-| uvicorn | 0.54.0 | BSD-3-Clause | `requirements.txt` |
-| httpx | 0.28.1 | BSD | `requirements.txt` |
-| pydantic-settings | 2.15.0 | MIT | `requirements.txt` |
-| dependency-injector | 4.49.1 | BSD | `requirements.txt` |
-| pytest | 9.1.1 | MIT | dev/test |
-| pytest-asyncio | 1.4.0 | Apache-2.0 | dev/test |
-| respx | 0.23.1 | BSD | dev/test |
+
+| Package | Version épinglée | Dernière stable (PyPI) | Écart | Licence | Justification |
+|---|---|---|---|---|---|
+| fastapi | 0.142.4 | 0.142.4 | — | MIT | Aligné sur la stable ; pin pour reproductibilité CI |
+| uvicorn | 0.54.0 | 0.54.0 | — | BSD-3-Clause | Aligné sur la stable |
+| httpx | 0.28.1 | 0.28.1 | — | BSD | Aligné sur la stable |
+| pydantic-settings | 2.15.0 | 2.15.0 | — | MIT | Aligné sur la stable |
+| dependency-injector | 4.49.1 | 4.49.1 | — | BSD | Aligné sur la stable |
+| pytest | 9.1.1 | 9.1.1 | — | MIT | dev/test ; aligné sur la stable |
+| pytest-asyncio | 1.4.0 | 1.4.0 | — | Apache-2.0 | dev/test ; aligné sur la stable |
+| respx | 0.23.1 | 0.23.1 | — | BSD | dev/test ; aligné sur la stable |
 
 Aucune dépendance copyleft forte ; `certifi` (copyleft faible) peut apparaître en MPL 2.0 (autorisé dans l'allowlist).
 
 ## Fiabilité
 
-- **Musique** : provider principal → secondaire → catalogue local → piste minimale (jamais vide).
-- **Notification** : canal préféré du profil → ordre de secours → canal d'urgence (log).
+- **Musique** : provider principal → secondaire → catalogue local → piste minimale (jamais vide). iTunes renvoie `429` → bascule vers le fournisseur secondaire / secours ; le cache limite les appels répétés (~20 req/min côté iTunes).
+- **Notification** : canal préféré du profil → ordre de secours → canal d'urgence (log structuré, sans état partagé entre requêtes).

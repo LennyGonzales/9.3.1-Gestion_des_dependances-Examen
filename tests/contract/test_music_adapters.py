@@ -2,6 +2,7 @@ import httpx
 import pytest
 import respx
 
+from app.domain.exceptions import ExternalServiceError
 from app.domain.models import Track
 from app.infrastructure.itunes_client import ItunesMusicClient
 from app.infrastructure.musicbrainz_client import MusicBrainzMusicClient
@@ -35,6 +36,16 @@ async def test_itunes_adapter_returns_domain_track():
     assert track.title == "Here Comes The Sun"
     assert track.listen_url == "https://music.apple.com/track/1"
     assert "trackViewUrl" not in track.__dict__
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_itunes_adapter_raises_on_rate_limit():
+    respx.get(f"{ITUNES_TEST_BASE_URL}/search").respond(status_code=429)
+    async with httpx.AsyncClient() as http:
+        client = ItunesMusicClient(http=http, base_url=ITUNES_TEST_BASE_URL)
+        with pytest.raises(ExternalServiceError, match="rate_limited"):
+            await client.search_track("Here Comes The Sun")
 
 
 @pytest.mark.asyncio

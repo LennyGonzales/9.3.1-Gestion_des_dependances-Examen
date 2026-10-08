@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from app.domain.models import (
@@ -78,7 +80,8 @@ async def test_resilient_falls_back_when_preferred_fails():
 
 
 @pytest.mark.asyncio
-async def test_resilient_emergency_when_all_fail():
+async def test_resilient_emergency_when_all_fail(caplog: pytest.LogCaptureFixture):
+    caplog.set_level(logging.WARNING)
     emergency = EmergencyConsoleAdapter()
     sender = ResilientNotificationSender(
         notifiers=[
@@ -99,4 +102,4 @@ async def test_resilient_emergency_when_all_fail():
     )
     assert delivery.channel == NotificationChannel.EMERGENCY
     assert delivery.delivered is True
-    assert len(emergency.logged) == 1
+    assert any("[EMERGENCY]" in record.message for record in caplog.records)

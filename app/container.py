@@ -124,7 +124,7 @@ class Container(containers.DeclarativeContainer):
     email_notifier = providers.Factory(EmailNotificationAdapter, email_mock=email_mock)
     sms_notifier = providers.Factory(SmsNotificationAdapter, sms_mock=sms_mock)
     push_notifier = providers.Factory(PushNotificationAdapter, push_mock=push_mock)
-    emergency_notifier = providers.Singleton(EmergencyConsoleAdapter)
+    emergency_notifier = providers.Factory(EmergencyConsoleAdapter)
 
     notification_sender = providers.Factory(
         build_notification_sender,

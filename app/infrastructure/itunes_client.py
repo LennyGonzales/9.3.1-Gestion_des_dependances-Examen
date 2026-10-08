@@ -15,6 +15,8 @@ class ItunesMusicClient:
                 f"{self._base_url}/search",
                 params={"term": query, "media": "music", "limit": 5},
             )
+            if response.status_code == 429:
+                raise ExternalServiceError("iTunes", "rate_limited")
             response.raise_for_status()
         except httpx.HTTPError as exc:
             raise ExternalServiceError("iTunes", str(exc)) from exc

@@ -1,7 +1,6 @@
 from app.domain.exceptions import ExternalServiceError, TrackNotFoundError
 from app.domain.models import ResolvedTrack, Track
-from app.domain.ports import MusicSearchPort
-from app.infrastructure.local_fallback_music import LocalFallbackMusicProvider
+from app.domain.ports import LocalMusicFallbackPort, MusicSearchPort
 
 
 class CompositeMusicResolver:
@@ -9,7 +8,7 @@ class CompositeMusicResolver:
         self,
         primary: MusicSearchPort,
         secondary: MusicSearchPort,
-        local_fallback: LocalFallbackMusicProvider,
+        local_fallback: LocalMusicFallbackPort,
         primary_source: str,
         secondary_source: str,
     ) -> None:
