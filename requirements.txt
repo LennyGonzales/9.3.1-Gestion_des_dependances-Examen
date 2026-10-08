@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic-settings
+dependency-injector
+pytest
+pytest-asyncio
+respx

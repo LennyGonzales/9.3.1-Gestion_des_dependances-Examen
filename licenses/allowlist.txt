@@ -1,0 +1,8 @@
+# Familles permissives
+MIT
+MIT License
+BSD
+Apache-2.0
+PSF-2.0
+# Exception copyleft
+MPL 2.0

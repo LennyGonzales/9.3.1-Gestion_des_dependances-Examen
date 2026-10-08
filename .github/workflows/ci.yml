@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t reveil-musical .
+
+      - name: Run tests
+        run: docker run --rm reveil-musical pytest -v
+
+      - name: Check dependency licenses
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo:ro" \
+            reveil-musical sh /repo/scripts/check_licenses.sh /repo
