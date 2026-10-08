@@ -5,13 +5,17 @@ import respx
 from app.domain.models import Track
 from app.infrastructure.itunes_client import ItunesMusicClient
 from app.infrastructure.musicbrainz_client import MusicBrainzMusicClient
-from tests.constants import TEST_USER_AGENT
+from tests.constants import (
+    ITUNES_TEST_BASE_URL,
+    MUSICBRAINZ_TEST_BASE_URL,
+    TEST_USER_AGENT,
+)
 
 
 @pytest.mark.asyncio
 @respx.mock
 async def test_itunes_adapter_returns_domain_track():
-    respx.get("https://itunes.apple.com/search").respond(
+    respx.get(f"{ITUNES_TEST_BASE_URL}/search").respond(
         json={
             "results": [
                 {
@@ -24,7 +28,7 @@ async def test_itunes_adapter_returns_domain_track():
     )
     async with httpx.AsyncClient() as http:
         track = await ItunesMusicClient(
-            http=http, base_url="https://itunes.apple.com"
+            http=http, base_url=ITUNES_TEST_BASE_URL
         ).search_track("Here Comes The Sun")
 
     assert isinstance(track, Track)
@@ -36,7 +40,7 @@ async def test_itunes_adapter_returns_domain_track():
 @pytest.mark.asyncio
 @respx.mock
 async def test_musicbrainz_adapter_returns_domain_track():
-    respx.get("https://musicbrainz.org/ws/2/recording").respond(
+    respx.get(f"{MUSICBRAINZ_TEST_BASE_URL}/recording").respond(
         json={
             "recordings": [
                 {
@@ -49,7 +53,7 @@ async def test_musicbrainz_adapter_returns_domain_track():
     async with httpx.AsyncClient() as http:
         track = await MusicBrainzMusicClient(
             http=http,
-            base_url="https://musicbrainz.org/ws/2",
+            base_url=MUSICBRAINZ_TEST_BASE_URL,
             user_agent=TEST_USER_AGENT,
         ).search_track("Here Comes The Sun")
 
