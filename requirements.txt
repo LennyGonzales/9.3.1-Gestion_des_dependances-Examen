@@ -1,8 +1,8 @@
-fastapi
-uvicorn[standard]
-httpx
-pydantic-settings
-dependency-injector
-pytest
-pytest-asyncio
-respx
+fastapi==0.142.4
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+pydantic-settings==2.15.0
+dependency-injector==4.49.1
+pytest==9.1.1
+pytest-asyncio==1.4.0
+respx==0.23.1

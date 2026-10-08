@@ -71,6 +71,24 @@ docker build -t reveil-musical .
 docker run --rm reveil-musical pytest -v
 ```
 
+Tests manuels de l’API (avec `jq`, API démarrée via `docker compose up`) :
+
+```bash
+./scripts/smoke_test.sh
+RUN_LIVE=1 ./scripts/smoke_test.sh   # inclut iTunes / MusicBrainz (sans demo)
+BASE_URL=http://127.0.0.1:8000 ./scripts/smoke_test.sh
+```
+
+## Versions des dépendances (`requirements.txt`)
+
+Les dépendances **directes** sont épinglées (`package==version`) pour :
+
+1. **Reproductibilité** : même environnement en local, en CI et à la correction (`docker build` + `pytest` identiques).
+2. **Audit des licences** : le sujet impose de documenter chaque composant avec sa version ; sans pin, un `pip install` ultérieur peut tirer une release plus récente et désaligner le README / `licenses/licenses.md`.
+3. **Maîtrise des risques** : limiter les mises à jour transitives non voulies (rupture d’API, licence nouvelle ou non validée).
+
+Les dépendances **transitives** (Starlette, Pydantic, ...) sont résolues à l’installation dans l’image Docker. L’inventaire complet est dans `licenses/licenses.md`. Pour monter de version : modifier `requirements.txt`, `docker build`, relancer les tests et `scripts/check_licenses.sh`, puis régénérer `licenses/licenses.md`.
+
 ## Licences des dépendances
 
 Vérification automatique (liste blanche dans `licenses/allowlist.txt`) :
@@ -82,14 +100,16 @@ docker run --rm -v "$(pwd):/repo:ro" reveil-musical sh /repo/scripts/check_licen
 
 Inventaire détaillé : voir `licenses/licenses.md` (généré via `pip-licenses` dans l'image Docker).
 
-| Package | Version (image Docker) | Licence | Remarque |
+| Package | Version épinglée | Licence | Remarque |
 |---|---|---|---|
-| fastapi | voir `licenses/licenses.md` | MIT | OK |
-| uvicorn | voir scan | BSD | OK |
-| httpx | voir scan | BSD | OK |
-| pydantic-settings | voir scan | MIT | OK |
-| dependency-injector | voir scan | BSD | OK |
-| pytest / pytest-asyncio / respx | voir scan | MIT / Apache-2.0 / BSD | OK (dev/test) |
+| fastapi | 0.142.4 | MIT | `requirements.txt` |
+| uvicorn | 0.54.0 | BSD-3-Clause | `requirements.txt` |
+| httpx | 0.28.1 | BSD | `requirements.txt` |
+| pydantic-settings | 2.15.0 | MIT | `requirements.txt` |
+| dependency-injector | 4.49.1 | BSD | `requirements.txt` |
+| pytest | 9.1.1 | MIT | dev/test |
+| pytest-asyncio | 1.4.0 | Apache-2.0 | dev/test |
+| respx | 0.23.1 | BSD | dev/test |
 
 Aucune dépendance copyleft forte ; `certifi` (copyleft faible) peut apparaître en MPL 2.0 (autorisé dans l'allowlist).
 
