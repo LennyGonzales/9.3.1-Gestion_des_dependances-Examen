@@ -10,7 +10,7 @@ from app.domain.models import (
     UserWakeProfile,
     WeatherType,
 )
-from app.infrastructure.composite_music_resolver import DemoMusicResolver
+from app.infrastructure.music.composite_music_resolver import DemoMusicResolver
 from app.services.wakeup_service import WakeupService
 from tests.conftest import FakeMusicResolver, FakeNotifier, FakeProfiles
 

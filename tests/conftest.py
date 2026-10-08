@@ -11,8 +11,14 @@ from app.domain.models import (
     UserWakeProfile,
     WeatherType,
 )
+from app.config import Settings
+from app.container import container
 from app.main import app, lifespan
 from app.services.wakeup_service import WakeupService
+
+
+def _settings_with_music_provider(provider: str) -> Settings:
+    return Settings().model_copy(update={"music_provider": provider})
 
 
 class FakeProfiles:
@@ -100,7 +106,20 @@ def fake_wakeup_service() -> WakeupService:
 
 @pytest.fixture
 async def client() -> AsyncClient:
-    async with lifespan(app):
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            yield ac
+    """E2E avec iTunes primaire, indépendamment du `.env` (reproductibilité CI / correction)."""
+    settings = _settings_with_music_provider("itunes")
+    with container.config.override(settings):
+        async with lifespan(app):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                yield ac
+
+
+@pytest.fixture
+async def client_musicbrainz_primary() -> AsyncClient:
+    settings = _settings_with_music_provider("musicbrainz")
+    with container.config.override(settings):
+        async with lifespan(app):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                yield ac

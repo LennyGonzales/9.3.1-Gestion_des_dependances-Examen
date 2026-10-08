@@ -148,3 +148,65 @@ async def test_wakeup_falls_back_to_local_when_apis_fail(client: AsyncClient):
     assert body["musicSource"] == "local"
     assert body["degraded"] is True
     assert body["track"]["title"] == "Singin' in the Rain"
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_wakeup_falls_back_to_musicbrainz_when_itunes_rate_limited(
+    client: AsyncClient,
+):
+    respx.get(f"{ITUNES_TEST_BASE_URL}/search").respond(status_code=429)
+    respx.get(f"{MUSICBRAINZ_TEST_BASE_URL}/recording").respond(
+        json={
+            "recordings": [
+                {
+                    "title": "Singin' in the Rain",
+                    "artist-credit": [{"name": "Gene Kelly"}],
+                }
+            ]
+        }
+    )
+    payload = {
+        "userId": "user-soleil",
+        "dayOfWeek": "THURSDAY",
+        "weather": "PLUIE",
+    }
+
+    response = await client.post(TRIGGER_PATH, json=payload)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert_wakeup_response_shape(body)
+    assert body["musicSource"] == "musicbrainz"
+    assert body["degraded"] is False
+    assert body["track"]["title"] == "Singin' in the Rain"
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_wakeup_without_demo_calls_musicbrainz_when_primary(
+    client_musicbrainz_primary: AsyncClient,
+):
+    itunes_route = respx.get(f"{ITUNES_TEST_BASE_URL}/search").respond(json={})
+    respx.get(f"{MUSICBRAINZ_TEST_BASE_URL}/recording").respond(
+        json={
+            "recordings": [
+                {
+                    "title": "Walking on Sunshine",
+                    "artist-credit": [{"name": "Katrina and the Waves"}],
+                }
+            ]
+        }
+    )
+    # Requête distincte de test_wakeup_without_demo_calls_itunes (cache singleton partagé).
+    payload = {**SOLEIL_BODY, "dayOfWeek": "SATURDAY"}
+
+    response = await client_musicbrainz_primary.post(TRIGGER_PATH, json=payload)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert_wakeup_response_shape(body)
+    assert body["musicSource"] == "musicbrainz"
+    assert body["track"]["title"] == "Walking on Sunshine"
+    assert body["track"]["artist"] == "Katrina and the Waves"
+    assert itunes_route.call_count == 0

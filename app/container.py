@@ -3,17 +3,17 @@ from dependency_injector import containers, providers
 from dependency_injector.resources import AsyncResource
 
 from app.config import Settings, get_settings
-from app.infrastructure.cached_music_client import CachedMusicClient
-from app.infrastructure.composite_music_resolver import (
+from app.infrastructure.http.http_client import create_http_client
+from app.infrastructure.music.cached_music_client import CachedMusicClient
+from app.infrastructure.music.composite_music_resolver import (
     CompositeMusicResolver,
     DemoMusicResolver,
 )
-from app.infrastructure.http_client import create_http_client
-from app.infrastructure.in_memory_user_profile import InMemoryUserProfileClient
-from app.infrastructure.itunes_client import ItunesMusicClient
-from app.infrastructure.local_fallback_music import LocalFallbackMusicProvider
-from app.infrastructure.memory_music_cache import InMemoryMusicCache
-from app.infrastructure.musicbrainz_client import MusicBrainzMusicClient
+from app.infrastructure.music.itunes_client import ItunesMusicClient
+from app.infrastructure.music.local_fallback_music import LocalFallbackMusicProvider
+from app.infrastructure.music.memory_music_cache import InMemoryMusicCache
+from app.infrastructure.music.musicbrainz_client import MusicBrainzMusicClient
+from app.infrastructure.users.in_memory_user_profile import InMemoryUserProfileClient
 from app.infrastructure.notifications.adapters import (
     EmailNotificationAdapter,
     EmergencyConsoleAdapter,

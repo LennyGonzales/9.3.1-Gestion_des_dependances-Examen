@@ -1,8 +1,8 @@
 import pytest
 
 from app.domain.models import Track
-from app.infrastructure.cached_music_client import CachedMusicClient
-from app.infrastructure.memory_music_cache import InMemoryMusicCache
+from app.infrastructure.music.cached_music_client import CachedMusicClient
+from app.infrastructure.music.memory_music_cache import InMemoryMusicCache
 
 
 class CountingDelegate:

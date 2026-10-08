@@ -10,7 +10,7 @@ Architecture **Ports & Adapters** (hexagonale) :
 
 - `app/domain/` — modèles, ports, exceptions
 - `app/services/` — `WakeupService` (orchestration)
-- `app/infrastructure/` — adaptateurs musique, cache, profils utilisateurs, notifications
+- `app/infrastructure/` — adaptateurs (`http/`, `music/`, `users/`, `notifications/`)
 - `app/api/` — route HTTP et DTO
 - `app/container.py` — injection de dépendances (`dependency-injector`)
 
@@ -65,6 +65,8 @@ Sans `demo`, les APIs externes sont utilisées (avec cache pour limiter les appe
 ```bash
 docker compose run --rm api pytest -v
 ```
+
+Les tests e2e **épinglent** le fournisseur musical via le conteneur DI (`itunes` par défaut, fixture dédiée pour `musicbrainz`) : la valeur de `MUSIC_PROVIDER` dans ton `.env` n’influence pas `pytest` (elle s’applique seulement à `docker compose up`).
 
 Ou sans compose :
 

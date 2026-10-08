@@ -2,8 +2,8 @@ import pytest
 
 from app.domain.exceptions import ExternalServiceError, TrackNotFoundError
 from app.domain.models import Track
-from app.infrastructure.composite_music_resolver import CompositeMusicResolver
-from app.infrastructure.local_fallback_music import LocalFallbackMusicProvider
+from app.infrastructure.music.composite_music_resolver import CompositeMusicResolver
+from app.infrastructure.music.local_fallback_music import LocalFallbackMusicProvider
 
 
 class StubMusic:

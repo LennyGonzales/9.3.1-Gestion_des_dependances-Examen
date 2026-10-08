@@ -4,8 +4,8 @@ import respx
 
 from app.domain.exceptions import ExternalServiceError
 from app.domain.models import Track
-from app.infrastructure.itunes_client import ItunesMusicClient
-from app.infrastructure.musicbrainz_client import MusicBrainzMusicClient
+from app.infrastructure.music.itunes_client import ItunesMusicClient
+from app.infrastructure.music.musicbrainz_client import MusicBrainzMusicClient
 from tests.constants import (
     ITUNES_TEST_BASE_URL,
     MUSICBRAINZ_TEST_BASE_URL,
